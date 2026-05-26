@@ -1,6 +1,5 @@
 package com.zx.common.crawl.request;
 
-
 import com.zx.common.crawl.enums.ActuatorStrategyEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +14,6 @@ import java.util.Map;
  */
 @Data
 @Builder
-@AllArgsConstructor
 public class CrawlerRequest implements Serializable {
     private static final long serialVersionUID = 1840130531011692239L;
     private String url;
@@ -24,14 +22,15 @@ public class CrawlerRequest implements Serializable {
     private Map<String, String> headers;
     private String userAgent;
     private String referrer;
+
+    @Builder.Default
     private Boolean post = Boolean.FALSE;
+
+    @Builder.Default
     private Long timeoutMillis = 8000L;
 
     private Proxy proxy;
 
+    @Builder.Default
     private ActuatorStrategyEnum strategy = ActuatorStrategyEnum.JSOUP;
-
-    public CrawlerRequest(String url) {
-        this.url = url;
-    }
 }

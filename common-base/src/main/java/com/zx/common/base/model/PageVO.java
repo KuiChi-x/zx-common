@@ -1,6 +1,7 @@
 package com.zx.common.base.model;
 
 import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,5 +20,5 @@ public class PageVO<T> implements Serializable {
     /**
      * 数据
      */
-    List<T> data;
+    List<T> list;
 }

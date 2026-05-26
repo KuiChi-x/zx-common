@@ -14,4 +14,8 @@ public interface RpcConstants {
      * https请求前缀
      */
     String HTTPS = "https://";
+
+    Integer REQUEST_SUCCESS_CODE = 200;
+
+    String QUESTION = "?";
 }

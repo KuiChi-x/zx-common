@@ -1,7 +1,6 @@
 package com.zx.common.rpc.annotation;
 
 import com.zx.common.rpc.config.DefaultConfiguration;
-import com.zx.common.rpc.config.RequestConfig;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Documented;
@@ -23,7 +22,7 @@ public @interface RequestClient {
      *
      * @return
      */
-    String domainEnvironment() default "";
+    String springDomain() default "";
 
     /**
      * 请求域名

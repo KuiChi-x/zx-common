@@ -1,5 +1,6 @@
 package com.zx.common.rpc.dto;
 
+import com.fasterxml.jackson.databind.JavaType;
 import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -39,4 +40,6 @@ public class RequestClientDTO implements Serializable {
      * 请求体
      */
     Object requestBody;
+
+    JavaType responseJavaType;
 }

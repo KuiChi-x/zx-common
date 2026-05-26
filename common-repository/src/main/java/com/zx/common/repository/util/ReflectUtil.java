@@ -1,15 +1,16 @@
 package com.zx.common.repository.util;
 
+import com.zx.common.base.utils.JsonUtils;
 import com.zx.common.repository.constant.RepositoryConstants;
 import com.zx.common.repository.exception.CommonRepositoryException;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +38,7 @@ public class ReflectUtil {
      * @param <E>             泛型
      * @return Specification
      */
+    @SuppressWarnings("unchecked")
     public static <E> Specification<E> createSpecification(Map<String, String> objConditions, Class<E> clazz, List<String> excludeLikeAttr) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -49,8 +51,7 @@ public class ReflectUtil {
                 } else {
                     predicates.add(cb.equal(root.get(RepositoryConstants.VALID), 1));
                 }
-            } catch (NoSuchFieldException e) {
-                log.warn("没有找到属性：valid");
+            } catch (NoSuchFieldException ignored) {
             }
 
             Field[] declaredFields = clazz.getDeclaredFields();
@@ -59,22 +60,29 @@ public class ReflectUtil {
                 String fieldName = field.getName();
                 String condition = objConditions.get(fieldName);
                 if (!StringUtils.isEmpty(condition)) {
-                    String typeName = field.getGenericType().getTypeName();
-                    Class<?> aClass;
+                    String typeName = field.getType().getName();
+                    Class aClass;
                     try {
                         aClass = Class.forName(typeName);
                     } catch (ClassNotFoundException e) {
-                        throw new CommonRepositoryException("未找到属性类型!");
+                        throw new CommonRepositoryException("未找到class!");
                     }
                     //属性不包含特定的属性并且是字符串采用模糊搜索
                     boolean isLike = aClass == String.class && (CollectionUtils.isEmpty(excludeLikeAttr) || !excludeLikeAttr.contains(fieldName));
                     if (isLike) {
-                        String queryFieldName = "%" + condition.replace("/", "\\/")
-                                .replaceAll("_", "\\\\_").replaceAll("%", "\\\\%") + "%";
-                        predicates.add(cb.like(root.get(fieldName), queryFieldName));
+                        // 转义下划线和百分号，防止被数据库当成通配符
+                        String queryFieldName = "%" + condition
+                                .replace("/", "\\/")
+                                .replace("_", "\\_")
+                                .replace("%", "\\%")
+                                + "%";
+                        // Hibernate 6 新增的 like 方法，第三个参数是 escape 字符
+                        predicates.add(cb.like(root.get(fieldName), queryFieldName, '\\'));
                     } else {
-                        List<String> conditionList = Arrays.asList(condition.split(","));
-                        predicates.add(cb.and(root.get(fieldName).in(conditionList)));
+                        Object[] array = Arrays.stream(condition.split(","))
+                                .map(item -> JsonUtils.convertObject(item, aClass))
+                                .toArray();
+                        predicates.add(cb.and(root.get(fieldName).in(array)));
                     }
                 }
             }
@@ -114,7 +122,7 @@ public class ReflectUtil {
                 } else {
                     predicates.add(cb.equal(root.get(RepositoryConstants.VALID), 1));
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
             //外键关联查询
@@ -202,26 +210,6 @@ public class ReflectUtil {
     }
 
     /**
-     * 获取所有属性值
-     *
-     * @param object object
-     * @return Map
-     * @throws IllegalAccessException IllegalAccessException
-     */
-    public static Map<String, Object> getFieldsValue(Object object) throws IllegalAccessException {
-        Class<?> clazz = object.getClass();
-        Map<String, Object> fieldValuesMap = new HashMap<>(16);
-        Field[] fields = clazz.getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            Object fieldValue = field.get(object);
-            fieldValuesMap.put(field.getName(), fieldValue);
-        }
-        return fieldValuesMap;
-    }
-
-    /**
      * 设置属性值
      *
      * @param property 设置的字段
@@ -265,16 +253,13 @@ public class ReflectUtil {
      * @throws IllegalAccessException IllegalAccessException
      */
     public static Map<String, Object> getValues(Object object) throws IllegalAccessException {
-        Map<String, Object> fieldValuesMap = new HashMap(16);
+        Map<String, Object> fieldValuesMap = new HashMap<>(16);
         Class<?> clazz = object.getClass();
-        if (clazz != null) {
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object fieldValue = field.get(object);
-                fieldValuesMap.put(field.getName(), fieldValue);
-            }
-            return fieldValuesMap;
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            Object fieldValue = field.get(object);
+            fieldValuesMap.put(field.getName(), fieldValue);
         }
         return fieldValuesMap;
     }

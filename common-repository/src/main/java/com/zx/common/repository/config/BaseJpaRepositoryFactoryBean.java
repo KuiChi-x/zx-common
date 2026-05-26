@@ -1,6 +1,7 @@
 package com.zx.common.repository.config;
 
-import com.zx.common.repository.BaseRepositoryImpl;
+import com.zx.common.repository.baseRepository.impl.BaseRepositoryImpl;
+import jakarta.persistence.EntityManager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
@@ -11,7 +12,6 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.util.Assert;
 
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 
 /**

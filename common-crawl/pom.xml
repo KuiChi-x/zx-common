@@ -6,34 +6,30 @@
     <parent>
         <groupId>cn.supzx.utils</groupId>
         <artifactId>zx-common</artifactId>
-        <version>1.0.0</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>common-crawl</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>cn.supzx.utils</groupId>
-            <artifactId>common-base</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.htmlunit</groupId>
+            <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -44,5 +40,4 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
-
 </project>

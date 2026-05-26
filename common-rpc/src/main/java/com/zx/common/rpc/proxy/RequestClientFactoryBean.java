@@ -1,6 +1,5 @@
 package com.zx.common.rpc.proxy;
 
-import com.zx.common.rpc.proxy.RequestClientHandler;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.lang.reflect.Proxy;

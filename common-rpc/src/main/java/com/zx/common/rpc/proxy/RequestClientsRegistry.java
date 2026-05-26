@@ -2,7 +2,6 @@ package com.zx.common.rpc.proxy;
 
 import com.zx.common.rpc.annotation.EnableHttpRequest;
 import com.zx.common.rpc.annotation.RequestClient;
-import com.zx.common.rpc.proxy.RequestClientFactoryBean;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -42,7 +41,10 @@ public class RequestClientsRegistry extends ClassPathScanningCandidateComponentP
                 String beanName = beanNameGenerator.generateBeanName(beanDefinition, registry);
                 BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(beanDefinition, beanName);
                 this.registerBeanDefinition(definitionHolder, registry);
-                genericBeanDefinition.getConstructorArgumentValues().addGenericArgumentValue(Objects.requireNonNull(genericBeanDefinition.getBeanClassName()));
+                String beanClassName = genericBeanDefinition.getBeanClassName();
+                if (Objects.nonNull(beanClassName)) {
+                    genericBeanDefinition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName);
+                }
                 genericBeanDefinition.setBeanClass(RequestClientFactoryBean.class);
                 genericBeanDefinition.setAutowireMode(2);
                 genericBeanDefinition.setLazyInit(true);

@@ -1,8 +1,8 @@
 package com.zx.common.crawl.enums;
 
-import com.zx.common.crawl.trategy.CrawlStrategy;
-import com.zx.common.crawl.trategy.HtmlUnitCrawlStrategy;
-import com.zx.common.crawl.trategy.JsoupCrawlStrategy;
+import com.zx.common.crawl.strategy.CrawlStrategy;
+import com.zx.common.crawl.strategy.HtmlUnitCrawlStrategy;
+import com.zx.common.crawl.strategy.JsoupCrawlStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

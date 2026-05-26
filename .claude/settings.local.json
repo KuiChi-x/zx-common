@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn compile:*)",
+      "Bash(java -version)",
+      "Bash(mvn -version)",
+      "Read(//c/Program Files/**)",
+      "Read(//d//**)",
+      "Bash(where java:*)",
+      "Read(//c/Users/xzhao32/**)",
+      "Bash(cp -r \"D:/ctrip_workspace/octopus-commons-springboot3/commons-base/src\" common-base/src)",
+      "Bash(cp -r \"D:/ctrip_workspace/octopus-commons-springboot3/commons-repository/src\" common-repository/src)",
+      "Bash(cp -r \"D:/ctrip_workspace/octopus-commons-springboot3/commons-rpc/src\" common-rpc/src)",
+      "Bash(cp -r \"D:/ctrip_workspace/octopus-commons-springboot3/commons-webapi/src\" common-web/src)",
+      "Bash(mkdir -p common-crawl)",
+      "Bash(cp -r \"D:/ctrip_workspace/octopus-commons-springboot3/commons-crawl/src\" common-crawl/src)",
+      "Bash(cp \"D:/ctrip_workspace/octopus-commons-springboot3/commons-crawl/pom.xml\" common-crawl/pom.xml)",
+      "Bash(find . -name \"*.java\" -exec sed -i 's/com\\\\.ctrip\\\\.hotel\\\\.octopus\\\\.commons/com.zx.common/g' {} +)",
+      "Bash(xargs -r sed -i 's/com\\\\.ctrip\\\\.hotel\\\\.octopus\\\\.commons/com.zx.common/g')",
+      "Read(//c/Users/**)",
+      "Bash(find /d -maxdepth 3 -name \"jdk*\" -type d)",
+      "Bash(export JAVA_HOME=\"/c/Program Files/Eclipse Adoptium/jdk-21.0.1.12-hotspot\")",
+      "Bash(export PATH=\"$JAVA_HOME/bin:$PATH\")",
+      "Bash(find common-cache:*)",
+      "Bash(mv CommonLockAutoConfiguration.java CommonCacheAutoConfiguration.java)",
+      "Bash(sed -i 's/CommonLockAutoConfiguration/CommonCacheAutoConfiguration/g' CommonCacheAutoConfiguration.java)",
+      "Bash(find . -name \"pom.xml\" -not -path \"*/target/*\" -exec sed -i 's/<version>2\\\\.0\\\\.0</<version>2.0.0-SNAPSHOT</g' {} +)",
+      "Bash(mvn clean:*)",
+      "Bash(mvn deploy:*)",
+      "Bash(mvn --version)",
+      "Bash('/c/Program Files/Eclipse Adoptium/jdk-21.0.1.12-hotspot/bin/keytool' -list -keystore '/c/Program Files/Eclipse Adoptium/jdk-21.0.1.12-hotspot/lib/security/cacerts' -storepass changeit)",
+      "Bash('/c/Program Files/Eclipse Adoptium/jdk-21.0.1.12-hotspot/bin/keytool' -list -cacerts -storepass changeit)",
+      "Bash('/c/Program Files/Eclipse Adoptium/jdk-21.0.1.12-hotspot/bin/keytool' -list -keystore '/c/Program Files/Eclipse Adoptium/jdk-21.0.1.12-hotspot/lib/security/cacerts' -storepass '')",
+      "Bash(export MAVEN_OPTS=\"-Djavax.net.ssl.trustStore=\\\\\"C:\\\\\\\\Program Files\\\\\\\\Temurin\\\\\\\\jdk-8.0.302.8-hotspot\\\\\\\\jre\\\\\\\\lib\\\\\\\\security\\\\\\\\cacerts\\\\\" -Djavax.net.ssl.trustStorePassword=changeit\")",
+      "Bash(export MAVEN_OPTS=\"-Djavax.net.ssl.trustStore=D:/cacerts_java8 -Djavax.net.ssl.trustStorePassword=changeit\")"
+    ]
+  }
+}

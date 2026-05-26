@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 public class RetryMonitor {
     @FunctionalInterface
     public interface Execute {
+        /**
+         * 执行方法
+         */
         void execute();
     }
 
@@ -58,7 +61,7 @@ public class RetryMonitor {
                     FAILED_QUEUE.offer(Pair.of(retryBO, failedNumber));
                 }
             }
-        }, 5, 5, TimeUnit.SECONDS);
+        }, 3, 30, TimeUnit.SECONDS);
     }
 
     public static void registry(Execute retryFunction, Integer retryCount) {
@@ -72,7 +75,7 @@ public class RetryMonitor {
             retryBO.setRetryCount(retryCount);
             retryBO.setExecute(retryFunction);
             FAILED_QUEUE.offer(Pair.of(retryBO, 1));
-            log.error("执行 1/3 失败，进入重试队列", e);
+            log.error("执行第 {}/{} 次失败，进入重试队列", 1, retryCount, e);
         }
     }
 }

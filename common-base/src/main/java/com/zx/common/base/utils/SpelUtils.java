@@ -20,8 +20,8 @@ public class SpelUtils {
     private static final Logger log = LoggerFactory.getLogger(SpelUtils.class);
     public static final String EXPRESSION_PREFIX = "#{";
     public static final String EXPRESSION_SUFFIX = "}";
-    private static final ExpressionParser parser = new SpelExpressionParser();
-    private static final Map<String, Expression> expressionMap = new ConcurrentReferenceHashMap<>();
+    private static final ExpressionParser PARSER = new SpelExpressionParser();
+    private static final Map<String, Expression> EXPRESSION_MAP = new ConcurrentReferenceHashMap<>();
     private static final Pattern RAW_PATTERN = Pattern.compile("[A-Za-z0-9_:.]*");
 
     public static boolean isRawExpression(String expressionString) {
@@ -35,7 +35,7 @@ public class SpelUtils {
             log.warn("{} might be illegal SPEL expression", expressionString);
         }
 
-        Expression expression = expressionMap.computeIfAbsent(expressionString, parser::parseExpression);
+        Expression expression = EXPRESSION_MAP.computeIfAbsent(expressionString, PARSER::parseExpression);
         return expression.getValue(context);
     }
 }

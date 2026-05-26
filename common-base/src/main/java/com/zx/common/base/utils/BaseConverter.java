@@ -1,12 +1,10 @@
 package com.zx.common.base.utils;
 
-import com.zx.common.base.model.PageVO;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,7 +17,7 @@ public class BaseConverter {
         T t = null;
         try {
             t = targetClass.newInstance();
-            if (ObjectUtils.isNotEmpty(source)) {
+            if (Objects.nonNull(source)) {
                 BeanUtils.copyProperties(source, t);
             }
             return t;
@@ -32,7 +30,6 @@ public class BaseConverter {
         return Optional.ofNullable(source).orElse(Collections.emptyList())
                 .stream()
                 .map(item -> convert(item, targetClass))
-                .filter(ObjectUtils::isNotEmpty)
                 .collect(Collectors.toList());
     }
 }

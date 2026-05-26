@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.zx.common.repository.CommonRepositoryAutoConfiguration
-
-org.springframework.boot.env.EnvironmentPostProcessor=\
-  com.zx.common.repository.config.SwaggerEnvironmentPostProcessor

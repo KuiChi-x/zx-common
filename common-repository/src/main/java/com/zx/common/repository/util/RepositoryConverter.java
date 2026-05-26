@@ -21,9 +21,7 @@ public class RepositoryConverter {
             }
         }
         pageResponse.setTotal(srcPages.getTotalElements());
-        pageResponse.setData(destList);
-        pageResponse.setPageSize(srcPages.getSize());
-        pageResponse.setCurrent(srcPages.getNumber() + 1);
+        pageResponse.setList(destList);
         return pageResponse;
     }
 }

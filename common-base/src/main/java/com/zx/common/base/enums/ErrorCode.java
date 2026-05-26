@@ -1,5 +1,6 @@
 package com.zx.common.base.enums;
 
+import com.zx.common.base.exception.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,14 +10,19 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ErrorCode {
+public enum ErrorCode implements BaseErrorCode {
+    /**
+     * 错误码
+     */
+    SYSTEM_EXCEPTION(-1, "SYSTEM_EXCEPTION"),
     SUCCESS(0, "SUCCESS"),
     BUSINESS_EXCEPTION(2000000, "BUSINESS_EXCEPTION"),
-    BAD_PARAMS(3000000, "BAD_PARAMS"),
-    SYSTEM_EXCEPTION(4000000, "SYSTEM_EXCEPTION")
+    BAD_PARAMS(2000001, "BAD_PARAMS"),
+    CAN_NOT_FIND_NODE(2000003, "未找到redis节点！"),
+    REQUEST_ERROR(2000004, "请求出错！"),
     ;
 
     private final int code;
-    private final String desc;
+    private final String message;
 
 }

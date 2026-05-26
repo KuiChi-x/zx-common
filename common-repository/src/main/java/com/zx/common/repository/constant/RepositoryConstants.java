@@ -11,6 +11,7 @@ public interface RepositoryConstants {
     String EMPTY_SORTER = "{}";
 
     String VALID = "valid";
+
     String ASCEND = "ascend";
 
     String POINT = ".";

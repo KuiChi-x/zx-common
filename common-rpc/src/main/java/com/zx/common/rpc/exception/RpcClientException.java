@@ -1,7 +1,6 @@
 package com.zx.common.rpc.exception;
 
 import com.zx.common.base.exception.BaseException;
-import lombok.Getter;
 
 /**
  * @author ZhaoXu
