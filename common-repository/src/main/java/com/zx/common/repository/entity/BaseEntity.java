@@ -13,6 +13,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.Date;
+
 /**
  * @author ZhaoXu
  */
@@ -25,15 +27,15 @@ public class BaseEntity {
     private Long id;
 
     @Column(name = "valid", nullable = false)
-    private Integer valid;
+    private Integer valid = 1;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Long createdAt;
+    private Date createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Long updatedAt;
+    private Date updatedAt;
 }

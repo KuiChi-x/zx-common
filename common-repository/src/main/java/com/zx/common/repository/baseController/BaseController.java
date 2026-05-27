@@ -11,6 +11,7 @@ import com.zx.common.repository.util.RepositoryConverter;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ public class BaseController<S, E> implements ApplicationRunner {
     private Type[] actualTypeArguments;
 
     @RequestMapping(path = "", method = RequestMethod.POST)
+    @ModelMapping
     public void add(@RequestBody S entityVO) {
         E entity = BaseConverter.convert(entityVO, (Class<E>) actualTypeArguments[1]);
         try {

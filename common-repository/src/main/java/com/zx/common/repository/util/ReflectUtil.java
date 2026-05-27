@@ -1,5 +1,6 @@
 package com.zx.common.repository.util;
 
+import com.zx.common.base.utils.ClassUtils;
 import com.zx.common.base.utils.JsonUtils;
 import com.zx.common.repository.constant.RepositoryConstants;
 import com.zx.common.repository.exception.CommonRepositoryException;
@@ -40,25 +41,24 @@ public class ReflectUtil {
      */
     @SuppressWarnings("unchecked")
     public static <E> Specification<E> createSpecification(Map<String, String> objConditions, Class<E> clazz, List<String> excludeLikeAttr) {
+        Map<String, String> conditions = objConditions == null ? new HashMap<>(8) : objConditions;
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             //未删除的数据
-            try {
-                clazz.getDeclaredField(RepositoryConstants.VALID);
-                if (!StringUtils.isEmpty(objConditions.get(RepositoryConstants.VALID))) {
-                    predicates.add(cb.equal(root.get(RepositoryConstants.VALID), Integer.valueOf(objConditions.get(RepositoryConstants.VALID))));
+            if (getField(clazz, RepositoryConstants.VALID) != null) {
+                if (!StringUtils.isEmpty(conditions.get(RepositoryConstants.VALID))) {
+                    predicates.add(cb.equal(root.get(RepositoryConstants.VALID), Integer.valueOf(conditions.get(RepositoryConstants.VALID))));
                 } else {
                     predicates.add(cb.equal(root.get(RepositoryConstants.VALID), 1));
                 }
-            } catch (NoSuchFieldException ignored) {
             }
 
-            Field[] declaredFields = clazz.getDeclaredFields();
+            List<Field> declaredFields = ClassUtils.getClassFields(clazz, null);
 
             for (Field field : declaredFields) {
                 String fieldName = field.getName();
-                String condition = objConditions.get(fieldName);
+                String condition = conditions.get(fieldName);
                 if (!StringUtils.isEmpty(condition)) {
                     String typeName = field.getType().getName();
                     Class aClass;
@@ -88,8 +88,8 @@ public class ReflectUtil {
             }
 
             //外键关联查询，新，可以省去map参数
-            if (!CollectionUtils.isEmpty(objConditions)) {
-                for (Map.Entry<String, String> entry : objConditions.entrySet()) {
+            if (!CollectionUtils.isEmpty(conditions)) {
+                for (Map.Entry<String, String> entry : conditions.entrySet()) {
                     if (entry.getKey().contains(".")) {
                         //递归解析真实的path
                         List<String> conditionList = Arrays.asList(entry.getValue().split(","));
@@ -219,7 +219,10 @@ public class ReflectUtil {
      */
     public static Boolean setValue(Object object, String property, Object value) throws NoSuchFieldException, IllegalAccessException {
         Class<?> clazz = object.getClass();
-        Field declaredField = clazz.getDeclaredField(property);
+        Field declaredField = getField(clazz, property);
+        if (declaredField == null) {
+            throw new NoSuchFieldException(property);
+        }
         declaredField.setAccessible(true);
         declaredField.set(object, value);
         return true;
@@ -255,7 +258,7 @@ public class ReflectUtil {
     public static Map<String, Object> getValues(Object object) throws IllegalAccessException {
         Map<String, Object> fieldValuesMap = new HashMap<>(16);
         Class<?> clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
+        List<Field> fields = ClassUtils.getClassFields(clazz, null);
         for (Field field : fields) {
             field.setAccessible(true);
             Object fieldValue = field.get(object);
@@ -278,11 +281,11 @@ public class ReflectUtil {
         Map<String, String> fieldValuesMap = new HashMap(8);
         Class<?> clazz = object.getClass();
         if (clazz != null) {
-            Field[] fields = clazz.getDeclaredFields();
+            List<Field> fields = ClassUtils.getClassFields(clazz, null);
             for (Field field : fields) {
                 field.setAccessible(true);
                 Object fieldValue = field.get(object);
-                fieldValuesMap.put(field.getName(), fieldValue.toString());
+                fieldValuesMap.put(field.getName(), fieldValue == null ? null : fieldValue.toString());
             }
             return fieldValuesMap;
         }
@@ -298,7 +301,7 @@ public class ReflectUtil {
      */
     public static List<Field> getTargetAnnoation(Class<?> objectClass, Class<? extends Annotation> annoClass) {
         List<Field> fields = new ArrayList<>();
-        Field[] declaredFields = objectClass.getDeclaredFields();
+        List<Field> declaredFields = ClassUtils.getClassFields(objectClass, null);
 
         for (Field field : declaredFields) {
             field.setAccessible(true);
@@ -314,5 +317,12 @@ public class ReflectUtil {
         } else {
             return null;
         }
+    }
+
+    private static Field getField(Class<?> clazz, String fieldName) {
+        return ClassUtils.getClassFields(clazz, null).stream()
+                .filter(field -> field.getName().equals(fieldName))
+                .findFirst()
+                .orElse(null);
     }
 }
