@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +57,7 @@ public class RedisLockAspect {
         int step = slotCountSum / jedisList.size();
         for (int i = 0; i < jedisList.size(); i++) {
             String newKey = lockKey + ".{lock-" + (offset + (i * step) & (slotCountSum - 1)) + "}";
-            Jedis jedis = new Jedis();
+            Jedis jedis = jedisList.get(i);
             RedLock redLock = new RedLock(jedis, newKey, UUID.randomUUID().toString());
             redLockList.add(redLock);
         }
