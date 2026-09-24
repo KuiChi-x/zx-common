@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>common-base</artifactId>
+    <name>common-base</name>
     <version>2.0.0</version>
 
     <properties>

@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>common-rpc</artifactId>
+    <name>common-rpc</name>
     <version>2.0.0</version>
 
     <properties>

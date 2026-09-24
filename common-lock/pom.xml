@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>common-lock</artifactId>
+    <name>common-lock</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
