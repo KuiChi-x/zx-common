@@ -1,13 +1,13 @@
 package com.zx.common.crawl.trategy;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.ProxyConfig;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.HttpMethod;
+import org.htmlunit.ProxyConfig;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.util.Cookie;
+import org.htmlunit.util.NameValuePair;
 import com.zx.common.crawl.request.CrawlerRequest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

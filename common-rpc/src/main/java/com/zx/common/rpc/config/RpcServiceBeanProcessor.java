@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -24,7 +23,7 @@ import java.util.Map;
 @Configuration
 @Slf4j
 public class RpcServiceBeanProcessor implements BeanPostProcessor {
-    @Resource
+    @org.springframework.beans.factory.annotation.Autowired
     private Environment environment;
 
     @Override
@@ -47,4 +46,3 @@ public class RpcServiceBeanProcessor implements BeanPostProcessor {
         return bean;
     }
 }
-

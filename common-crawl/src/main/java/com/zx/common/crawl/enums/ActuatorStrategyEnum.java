@@ -30,11 +30,11 @@ public enum ActuatorStrategyEnum {
         try {
             for (ActuatorStrategyEnum value : ActuatorStrategyEnum.values()) {
                 if (Objects.equals(value, crawlStrategy)) {
-                    return value.getCrawlStrategy().newInstance();
+                    return value.getCrawlStrategy().getDeclaredConstructor().newInstance();
                 }
             }
-            return JSOUP.crawlStrategy.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return JSOUP.crawlStrategy.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }

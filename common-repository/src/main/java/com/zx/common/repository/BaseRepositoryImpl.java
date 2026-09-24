@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ public class BaseRepositoryImpl<T, ID extends Serializable>
     @Override
     public Page<T> findByPage(Map<String, String> objConditions, Integer current, Integer pageSize, List<String> excludeLikeAttr, String sortAttr) {
         Pageable pageable;
-        if (!StringUtils.isEmpty(sortAttr)) {
+        if (StringUtils.hasText(sortAttr)) {
             pageable = PageRequest.of(current - 1, pageSize, sortAttr(objConditions, sortAttr));
         } else {
             pageable = PageRequest.of(current - 1, pageSize);
@@ -69,7 +69,7 @@ public class BaseRepositoryImpl<T, ID extends Serializable>
     public List<T> findByConditions(Map<String, String> objConditions, List<String> excludeLikeAttr, String sortAttr) {
         Specification<T> specification = ReflectUtil.createSpecification(objConditions, clazz, excludeLikeAttr);
 
-        if (!StringUtils.isEmpty(sortAttr)) {
+        if (StringUtils.hasText(sortAttr)) {
             return this.findAll(specification, sortAttr(objConditions, sortAttr));
         } else {
             return this.findAll(specification);

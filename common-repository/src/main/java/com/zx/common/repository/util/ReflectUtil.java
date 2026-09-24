@@ -7,9 +7,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +44,7 @@ public class ReflectUtil {
             //未删除的数据
             try {
                 clazz.getDeclaredField(RepositoryConstants.VALID);
-                if (!StringUtils.isEmpty(objConditions.get(RepositoryConstants.VALID))) {
+                if (StringUtils.hasText(objConditions.get(RepositoryConstants.VALID))) {
                     predicates.add(cb.equal(root.get(RepositoryConstants.VALID), Integer.valueOf(objConditions.get(RepositoryConstants.VALID))));
                 } else {
                     predicates.add(cb.equal(root.get(RepositoryConstants.VALID), 1));
@@ -58,7 +58,7 @@ public class ReflectUtil {
             for (Field field : declaredFields) {
                 String fieldName = field.getName();
                 String condition = objConditions.get(fieldName);
-                if (!StringUtils.isEmpty(condition)) {
+                if (StringUtils.hasText(condition)) {
                     String typeName = field.getGenericType().getTypeName();
                     Class<?> aClass;
                     try {
@@ -69,9 +69,11 @@ public class ReflectUtil {
                     //属性不包含特定的属性并且是字符串采用模糊搜索
                     boolean isLike = aClass == String.class && (CollectionUtils.isEmpty(excludeLikeAttr) || !excludeLikeAttr.contains(fieldName));
                     if (isLike) {
-                        String queryFieldName = "%" + condition.replace("/", "\\/")
-                                .replaceAll("_", "\\\\_").replaceAll("%", "\\\\%") + "%";
-                        predicates.add(cb.like(root.get(fieldName), queryFieldName));
+                        String queryFieldName = "%" + condition
+                                .replace("/", "\\/")
+                                .replace("_", "\\_")
+                                .replace("%", "\\%") + "%";
+                        predicates.add(cb.like(root.get(fieldName), queryFieldName, '\\'));
                     } else {
                         List<String> conditionList = Arrays.asList(condition.split(","));
                         predicates.add(cb.and(root.get(fieldName).in(conditionList)));

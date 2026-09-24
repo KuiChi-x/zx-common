@@ -8,11 +8,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -72,6 +70,10 @@ public final class JsonUtils {
 
     public static JavaType getJavaType(Method method) {
         return OBJECT_MAPPER.getTypeFactory().constructType(method.getGenericReturnType());
+    }
+
+    public static JavaType constructType(Type type) {
+        return OBJECT_MAPPER.getTypeFactory().constructType(type);
     }
 
     public static <T> T convertObject(Object source, JavaType javaType) {

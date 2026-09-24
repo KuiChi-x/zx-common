@@ -24,11 +24,14 @@ public class CrawlerRequest implements Serializable {
     private Map<String, String> headers;
     private String userAgent;
     private String referrer;
+    @Builder.Default
     private Boolean post = Boolean.FALSE;
+    @Builder.Default
     private Long timeoutMillis = 8000L;
 
     private Proxy proxy;
 
+    @Builder.Default
     private ActuatorStrategyEnum strategy = ActuatorStrategyEnum.JSOUP;
 
     public CrawlerRequest(String url) {

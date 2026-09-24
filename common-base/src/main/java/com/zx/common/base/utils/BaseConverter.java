@@ -1,10 +1,8 @@
 package com.zx.common.base.utils;
 
-import com.zx.common.base.model.PageVO;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +16,7 @@ public class BaseConverter {
     public static <S, T> T convert(S source, Class<T> targetClass) {
         T t = null;
         try {
-            t = targetClass.newInstance();
+            t = targetClass.getDeclaredConstructor().newInstance();
             if (ObjectUtils.isNotEmpty(source)) {
                 BeanUtils.copyProperties(source, t);
             }

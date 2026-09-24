@@ -1,0 +1,89 @@
+name: Release to Maven Central
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Verify tag matches project version
+        shell: bash
+        run: test "${GITHUB_REF_NAME#v}" = "$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)"
+      - name: Verify all module versions
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          import xml.etree.ElementTree as ET
+
+          ns = {'m': 'http://maven.apache.org/POM/4.0.0'}
+          root = ET.parse('pom.xml').getroot()
+          version = root.findtext('m:version', namespaces=ns)
+          modules = [x.text for x in root.findall('m:modules/m:module', ns)]
+          errors = []
+          for module in modules:
+              path = pathlib.Path(module) / 'pom.xml'
+              project = ET.parse(path).getroot()
+              parent_version = project.findtext('m:parent/m:version', namespaces=ns)
+              project_version = project.findtext('m:version', namespaces=ns)
+              if parent_version != version:
+                  errors.append(f'{path}: parent version {parent_version!r} != {version!r}')
+              if project_version is not None and project_version != version:
+                  errors.append(f'{path}: project version {project_version!r} != {version!r}')
+              for dependency in project.findall('m:dependencies/m:dependency', ns):
+                  group_id = dependency.findtext('m:groupId', namespaces=ns)
+                  dependency_version = dependency.findtext('m:version', namespaces=ns)
+                  if group_id == root.findtext('m:groupId', namespaces=ns) and dependency_version != version:
+                      errors.append(f'{path}: internal dependency version {dependency_version!r} != {version!r}')
+          if errors:
+              raise SystemExit('\n'.join(errors))
+          print(f'All module versions are {version}')
+          PY
+      - name: Create Maven Central credentials
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.m2"
+          cat > "$HOME/.m2/settings.xml" <<'EOF'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+            <servers>
+              <server>
+                <id>central</id>
+                <username>${env.CENTRAL_USERNAME}</username>
+                <password>${env.CENTRAL_TOKEN}</password>
+              </server>
+              <server>
+                <id>gpg-signing</id>
+                <password>${env.GPG_PASSPHRASE}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+        env:
+          CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Import artifact signing key
+        shell: bash
+        run: printf '%s' "$MAVEN_GPG_PRIVATE_KEY" | gpg --batch --import
+        env:
+          MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+      - name: Publish
+        run: mvn --batch-mode --no-transfer-progress -Pcentral-release clean deploy
+        env:
+          CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
