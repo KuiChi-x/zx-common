@@ -180,11 +180,8 @@
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>${maven-gpg.version}</version>
                         <configuration>
-                            <passphraseServerId>gpg-signing</passphraseServerId>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
+                            <bestPractices>true</bestPractices>
+                            <passphraseEnvName>MAVEN_GPG_PASSPHRASE</passphraseEnvName>
                         </configuration>
                         <executions>
                             <execution>

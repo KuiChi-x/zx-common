@@ -65,17 +65,12 @@ jobs:
                 <username>${env.CENTRAL_USERNAME}</username>
                 <password>${env.CENTRAL_TOKEN}</password>
               </server>
-              <server>
-                <id>gpg-signing</id>
-                <password>${env.GPG_PASSPHRASE}</password>
-              </server>
             </servers>
           </settings>
           EOF
         env:
           CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       - name: Import artifact signing key
         shell: bash
         run: printf '%s' "$MAVEN_GPG_PRIVATE_KEY" | gpg --batch --import
@@ -86,4 +81,4 @@ jobs:
         env:
           CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
